@@ -1,36 +1,36 @@
 import kotlin.concurrent.thread
 import kotlin.random.Random
 
+interface Movable {
+    var x: Double
+    var y: Double
+    var speed: Double
+    fun move()
+}
 open class Human(
     var fullname: String,
     var age: Int,
-    var speed: Double,
+    override var speed: Double,
     var group_number: Int,
-) {
-    var x: Double = 0.0
-    var y: Double = 0.0
-
+) : Movable {
+    override var x: Double = 0.0
+    override var y: Double = 0.0
     init {
         println("Создан человек: $fullname, возраст: $age, номер группы: $group_number")
     }
-
-    open fun move() {
+    override fun move() {
         val directionX = Random.nextDouble(-1.0, 1.0)
         val directionY = Random.nextDouble(-1.0, 1.0)
-
         x += directionX * speed
         y += directionY * speed
-
-        println("$fullname переместился в позицию: (${"%.2f".format(x)}, ${"%.2f".format(y)})")
+        println("$fullname переместился в позицию: ${getPosition()}")
     }
-
     fun getPosition(): String = "(${"%.2f".format(x)}, ${"%.2f".format(y)})"
 }
-
 class Driver(
     fullname: String,
     age: Int,
-    speed: Double,
+    override var speed: Double,
     group_number: Int,
     var direction: String = "right"
 ) : Human(fullname, age, speed, group_number) {
@@ -67,12 +67,10 @@ fun main() {
 
     val all = humans + driver
 
-    val threads = all.map { obj ->
-        thread {
+    val threads = all.map { obj -> thread {
             for (second in 1..time) {
                 Thread.sleep(300)
                 if (obj is Driver) {
-                    // водитель иногда меняет направление
                     if (second % 3 == 0) {
                         val dirs = listOf("up", "down", "left", "right")
                         obj.changeDirection(dirs.random())

@@ -13,7 +13,7 @@ fun main() {
 
     val time = 10
 
-    println("\n=== НАЧАЛО СИМУЛЯЦИИ ===")
+    println("\nНачало симуляции")
 
     val all = humans + driver
 

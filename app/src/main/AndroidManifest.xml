@@ -13,10 +13,14 @@
         android:theme="@style/Theme.MyCalculator" >
         <activity
             android:name=".MainActivity"
+<<<<<<< HEAD
             android:exported="true" />
         <activity
             android:name=".CalculatorActivity"
             android:exported="true" >
+=======
+            android:exported="true">
+>>>>>>> 3574c88f5146e42cdddd49cd2c020b39378de82f
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

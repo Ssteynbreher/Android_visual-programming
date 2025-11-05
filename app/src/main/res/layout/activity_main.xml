@@ -1,36 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="24dp"
-    android:background="#ffffff">
-    <LinearLayout
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/ivBackground"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/background_main"
+        android:scaleType="centerCrop"
+        android:contentDescription="Фоновое изображение" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:padding="24dp">
 
         <Button
             android:id="@+id/button_calculator"
-            android:layout_width="wrap_content"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
             android:text="Калькулятор"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#8000B0"
             android:padding="16dp"
-            android:layout_marginBottom="24dp" />
+            android:layout_marginBottom="16dp" />
 
         <Button
-            android:id="@+id/button_media_player"
-            android:layout_width="wrap_content"
+            android:id="@+id/button_media"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:text="Медиаплеер"
-            android:padding="16dp" />
+            android:text="Плеер"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#8000B0"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp" />
 
         <Button
-            android:id="@+id/button_messenger"
-            android:layout_width="wrap_content"
+            android:id="@+id/button_location"
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:text="Сообщения"
-            android:padding="16dp" />
-        </LinearLayout>
-</LinearLayout>
+            android:text="Местоположение"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#8000B0"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/button_telephony"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="Сети"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#8000B0"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/button_socket"
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="Сокеты"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#8000B0"
+            android:padding="16dp"
+            android:layout_marginBottom="16dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

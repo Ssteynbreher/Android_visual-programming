@@ -12,10 +12,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val buttonCalculator: Button = findViewById(R.id.button_calculator)
-        val buttonMediaPlayer: Button = findViewById(R.id.button_media_player)
-
         buttonCalculator.setOnClickListener {
             val intent = Intent(this, CalculatorActivity::class.java)
+            startActivity(intent)
+        }
+
+        val buttonMedia = findViewById<Button>(R.id.button_media)
+        buttonMedia.setOnClickListener {
+            val intent = Intent(this, MediaPlayerActivity::class.java)
             startActivity(intent)
         }
     }

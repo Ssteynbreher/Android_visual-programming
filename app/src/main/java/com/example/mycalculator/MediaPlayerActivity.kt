@@ -1,13 +1,13 @@
 package com.example.mycalculator
-
 import android.Manifest
+import android.content.Context
 import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.os.Environment
 import android.os.Handler
 import android.os.Looper
-import android.provider.MediaStore
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -26,19 +26,25 @@ class MediaPlayerActivity : AppCompatActivity() {
     private lateinit var tvCurrentTrack: TextView
 
     private var mediaPlayer: MediaPlayer? = null
-    private var musicFiles: List<File> = emptyList()
+    private var musicFiles: MutableList<File> = mutableListOf()
     private var currentTrackIndex = 0
+    private var isPlaying = false
     private val handler = Handler(Looper.getMainLooper())
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        if (isGranted) loadMusicFiles() else Toast.makeText(this, "Разрешение отклонено", Toast.LENGTH_LONG).show()
+        if (isGranted) {
+            loadMusicFiles()
+        } else {
+            Toast.makeText(this, "Разрешение отклонено", Toast.LENGTH_LONG).show()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_media_player)
+
         initViews()
         setupVolumeControl()
         requestStoragePermission()
@@ -64,10 +70,19 @@ class MediaPlayerActivity : AppCompatActivity() {
         btnStop.setOnClickListener { stopTrack() }
 
         seekBarProgress.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {}
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                handler.removeCallbacksAndMessages(null)
+            }
             override fun onStopTrackingTouch(seekBar: SeekBar?) {
-                mediaPlayer?.seekTo(seekBar!!.progress)
+                if (mediaPlayer != null && seekBar != null) {
+                    mediaPlayer!!.seekTo(seekBar.progress)
+                    if (isPlaying) {
+                        mediaPlayer!!.start()
+                        updateSeekBar()
+                    }
+                }
             }
         })
     }
@@ -82,98 +97,122 @@ class MediaPlayerActivity : AppCompatActivity() {
     }
 
     private fun loadMusicFiles() {
-        val musicList = mutableListOf<File>()
-        val collection = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
-        val projection = arrayOf(MediaStore.Audio.Media.DATA)
-        val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
-        contentResolver.query(collection, projection, selection, null, null)?.use { cursor ->
-            val pathColumn = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
-            while (cursor.moveToNext()) {
-                val path = cursor.getString(pathColumn)
-                val file = File(path)
-                if (file.exists() && file.name.endsWith(".mp3", ignoreCase = true)) {
-                    musicList.add(file)
+        musicFiles.clear()
+        val myMusicDir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC), "MyMusic")
+
+        if (!myMusicDir.exists()) {
+            myMusicDir.mkdirs()
+        }
+
+        if (myMusicDir.exists() && myMusicDir.isDirectory) {
+            val files = myMusicDir.listFiles()
+            if (files != null) {
+                for (file in files) {
+                    if (file.isFile && file.name.endsWith(".mp3", ignoreCase = true)) {
+                        musicFiles.add(file)
+                    }
                 }
             }
         }
-        musicFiles = musicList
+
         if (musicFiles.isEmpty()) {
-            Toast.makeText(this, "MP3 не найдены", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "MP3 не найдены в Music/MyMusic", Toast.LENGTH_LONG).show()
+            tvCurrentTrack.text = "Нет треков"
         } else {
             val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, musicFiles.map { it.name })
             lvMusicList.adapter = adapter
+            playTrack(0)
         }
     }
 
     private fun playTrack(position: Int) {
+        if (position < 0 || position >= musicFiles.size) return
+
         currentTrackIndex = position
         tvCurrentTrack.text = musicFiles[position].name
+        if (mediaPlayer != null) {
+            mediaPlayer!!.stop()
+            mediaPlayer!!.release()
+        }
 
-        mediaPlayer?.release()
-        mediaPlayer = MediaPlayer().apply {
-            setDataSource(musicFiles[position].absolutePath)
-            prepare()
-            start()
+        mediaPlayer = MediaPlayer()
+        mediaPlayer!!.setDataSource(musicFiles[position].absolutePath)
+        mediaPlayer!!.prepare()
+        mediaPlayer!!.start()
+
+        isPlaying = true
+        btnPlayPause.setImageResource(android.R.drawable.ic_media_pause)
+
+        seekBarProgress.max = mediaPlayer!!.duration
+        seekBarProgress.progress = 0
+
+        updateSeekBar()
+
+        mediaPlayer!!.setOnCompletionListener {
+            playNext()
+        }
+    }
+
+    private fun togglePlayPause() {
+        if (mediaPlayer == null) return
+
+        if (isPlaying) {
+            mediaPlayer!!.pause()
+            isPlaying = false
+            btnPlayPause.setImageResource(android.R.drawable.ic_media_play)
+        } else {
+            mediaPlayer!!.start()
+            isPlaying = true
             btnPlayPause.setImageResource(android.R.drawable.ic_media_pause)
             updateSeekBar()
         }
     }
 
-    private fun togglePlayPause() {
-        mediaPlayer?.let {
-            if (it.isPlaying) {
-                it.pause()
-                btnPlayPause.setImageResource(android.R.drawable.ic_media_play)
-            } else {
-                it.start()
-                btnPlayPause.setImageResource(android.R.drawable.ic_media_pause)
-                updateSeekBar()
-            }
-        }
-    }
-
     private fun stopTrack() {
-        mediaPlayer?.let {
-            it.stop()
+        if (mediaPlayer != null) {
+            mediaPlayer!!.stop()
+            mediaPlayer!!.prepareAsync()
             seekBarProgress.progress = 0
+            isPlaying = false
             btnPlayPause.setImageResource(android.R.drawable.ic_media_play)
-            tvCurrentTrack.text = "Выберите трек"
+            tvCurrentTrack.text = "Остановлено"
         }
     }
 
     private fun playNext() {
-        if (musicFiles.isNotEmpty()) {
-            currentTrackIndex = (currentTrackIndex + 1) % musicFiles.size
-            playTrack(currentTrackIndex)
-        }
+        if (musicFiles.isEmpty()) return
+        currentTrackIndex = (currentTrackIndex + 1) % musicFiles.size
+        playTrack(currentTrackIndex)
     }
 
     private fun playPrevious() {
-        if (musicFiles.isNotEmpty()) {
-            currentTrackIndex = if (currentTrackIndex - 1 < 0) musicFiles.size - 1 else currentTrackIndex - 1
-            playTrack(currentTrackIndex)
-        }
+        if (musicFiles.isEmpty()) return
+        currentTrackIndex = if (currentTrackIndex - 1 < 0) musicFiles.size - 1 else currentTrackIndex - 1
+        playTrack(currentTrackIndex)
     }
 
     private fun updateSeekBar() {
-        handler.postDelayed(object : Runnable {
-            override fun run() {
-                mediaPlayer?.let {
-                    seekBarProgress.max = it.duration
-                    seekBarProgress.progress = it.currentPosition
-                    if (it.isPlaying) handler.postDelayed(this, 1000)
-                }
-            }
-        }, 1000)
+        handler.removeCallbacksAndMessages(null)
+        if (mediaPlayer != null && isPlaying) {
+            val current = mediaPlayer!!.currentPosition
+            seekBarProgress.progress = current
+            handler.postDelayed({ updateSeekBar() }, 1000)
+        }
     }
 
     private fun setupVolumeControl() {
-        val audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
-        seekBarVolume.max = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
-        seekBarVolume.progress = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+        val audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC)
+        val currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
+
+        seekBarVolume.max = maxVolume
+        seekBarVolume.progress = currentVolume
+
         seekBarVolume.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0)
+                if (fromUser) {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0)
+                }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
@@ -182,7 +221,10 @@ class MediaPlayerActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.release()
+        if (mediaPlayer != null) {
+            mediaPlayer!!.release()
+            mediaPlayer = null
+        }
         handler.removeCallbacksAndMessages(null)
     }
 }

@@ -142,6 +142,7 @@ class MediaPlayerActivity : AppCompatActivity() {
                 setDataSource(file.absolutePath)
                 prepare()
                 start()
+                // Переключаем на паузу (системная иконка)
                 btnPlayPause.setImageResource(android.R.drawable.ic_media_pause)
                 updateSeekBar()
             } catch (e: IOException) {

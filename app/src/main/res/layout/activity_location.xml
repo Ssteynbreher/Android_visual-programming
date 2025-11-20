@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/main"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+tools:context=".LocationActivity">
+
+<LinearLayout
+    android:id="@+id/linearLayout"
+    android:layout_width="0dp"
+    android:layout_height="0dp"
+    android:layout_marginStart="1dp"
+    android:layout_marginTop="1dp"
+    android:layout_marginEnd="1dp"
+    android:layout_marginBottom="1dp"
+    android:orientation="vertical"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="122dp"
+        android:orientation="vertical">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <Button
+                android:id="@+id/back_to_main"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="32dp"
+                android:layout_marginTop="24dp"
+                android:text="Назад"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_lat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Широта: " />
+
+        <TextView
+            android:id="@+id/tv_lon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Долгота: " />
+
+        <TextView
+            android:id="@+id/tv_alt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Высота: " />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Время: " />
+    </LinearLayout>
+</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

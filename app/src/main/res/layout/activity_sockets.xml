@@ -1,70 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="24dp"
+    android:gravity="center_horizontal"
+    android:background="#F8F8F8">
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Socket Communication"
-        android:textSize="24sp"
+        android:text="Sockets"
+        android:textSize="20sp"
         android:textStyle="bold"
-        android:gravity="center"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:id="@+id/tvStatus"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Status: Ready"
-        android:textSize="18sp"
-        android:layout_marginBottom="16dp"/>
+        android:textColor="#7E57C2"
+        android:layout_marginBottom="36dp" />
 
     <Button
-        android:id="@+id/btnStartServer"
+        android:id="@+id/btnSendData"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Start Android Server"
-        android:layout_marginBottom="8dp"/>
-
-    <Button
-        android:id="@+id/btnStartClient"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Start Android Client"
-        android:layout_marginBottom="8dp"/>
-
-    <Button
-        android:id="@+id/btnConnectToPC"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Connect to PC Server"
-        android:layout_marginBottom="16dp"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Messages Log:"
+        android:text="Отправить данные"
         android:textSize="16sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+        android:backgroundTint="#7E57C2"
+        android:layout_marginBottom="24dp" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:fillViewport="true">
 
         <TextView
-            android:id="@+id/tvMessages"
+            android:id="@+id/tvSockets"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text=""
-            android:background="@android:color/white"
-            android:padding="8dp"
-            android:textColor="@android:color/black"
-            android:textSize="14sp"/>
+            android:background="#E6DCED"
+            android:textColor="#7E57C2"
+            android:textSize="14sp"
+            android:fontFamily="monospace"
+            android:padding="16dp" />
+
     </ScrollView>
 
 </LinearLayout>

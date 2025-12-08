@@ -41,6 +41,8 @@ android {
 
 dependencies {
 
+    implementation("org.zeromq:jeromq:0.5.2")
+    implementation("org.zeromq:jeromq:0.5.3")
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
